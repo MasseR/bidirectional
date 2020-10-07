@@ -1,7 +1,8 @@
 {-# LANGUAGE TemplateHaskell #-}
 module Main (main) where
 
-import System.Exit (exitSuccess, exitFailure)
+import System.Exit
+       (exitFailure, exitSuccess)
 
 import Data.Functor.Identity
 
