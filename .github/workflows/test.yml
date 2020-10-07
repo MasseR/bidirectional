@@ -12,6 +12,6 @@ jobs:
     - uses: actions/checkout@v1
     - uses: cachix/install-nix-action@v11
     - run: nix run -I nixpkgs=channel:nixos-unstable nixpkgs.hlint -c hlint src
+    - run: nix-shell -I nixpkgs=channel:nixos-unstable --run ./restyle.sh
     - run: nix-build -E '(import <nixpkgs> {}).haskellPackages.callPackage ./. {}' -I nixpkgs=channel:nixos-${{ matrix.channel }}
-    - run: nix-shell -I nixpkgs=channel:nixos-${{ matrix.channel }} --run ./restyle.sh
     - run: git diff --exit-code
