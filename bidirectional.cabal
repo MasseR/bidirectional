@@ -5,9 +5,9 @@ cabal-version:       2.0
 
 name:                bidirectional
 version:             0.1.0.0
--- synopsis:
--- description:
--- bug-reports:
+synopsis:            Simple bidirectional serialization and deserialization
+description:         Bidirectional serialization based on https://blog.poisson.chat/posts/2017-01-01-monadic-profunctors.html
+bug-reports:         https://github.com/MasseR/bidirectional/issues
 license:             BSD3
 license-file:        LICENSE
 author:              Mats Rauhala
@@ -16,6 +16,11 @@ maintainer:          mats.rauhala@iki.fi
 category:            Codec
 build-type:          Simple
 extra-source-files:  CHANGELOG.md
+                     README.md
+
+source-repository head
+  type: git
+  location: https://github.com/MasseR/bidirectional
 
 library
   exposed-modules:     Data.IParser

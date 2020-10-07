@@ -29,10 +29,16 @@ Then we create the parsers using the `parser` function.
 
 ``` haskell
 int :: SimpleParser Int
-int = parser (StateT $ \(x:xs) -> (,xs) <$> readMaybe x) (\x -> x <$ tell [show x])
+int =
+  parser
+    (StateT $ \(x:xs) -> (,xs) <$> readMaybe x)
+    (\x -> x <$ tell [show x])
 
 string :: SimpleParser String
-string = parser (StateT $ \(x:xs) -> Just (x,xs)) (\x -> x <$ tell [x])
+string =
+  parser
+    (StateT $ \(x:xs) -> Just (x,xs))
+    (\x -> x <$ tell [x])
 ```
 
 One small detail for creating records, is that the encoder gets the full record
