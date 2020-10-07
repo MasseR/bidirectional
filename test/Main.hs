@@ -1,4 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TupleSections #-}
 module Main (main) where
 
 import System.Exit
@@ -13,9 +14,12 @@ import qualified Hedgehog.Range as Range
 
 import Control.Monad.Reader
        (ReaderT(..), runReaderT)
+import Control.Monad.State
+       (StateT(..), evalStateT)
 import Control.Monad.Writer
        (Writer, execWriter, tell)
-import Text.Read (readMaybe)
+import Text.Read
+       (readMaybe)
 
 import Data.IParser
 
@@ -52,6 +56,19 @@ prop_bidirectional = property $ do
   x <- forAll $ Gen.integral (Range.linear 0 100)
   let int = parser (ReaderT readMaybe) (\x -> x <$ tell [show x])
   runReaderT (decode int) (head (execWriter (encode int x))) === Just x
+
+data Person
+  = Person { name :: String, age :: Int }
+  deriving (Show, Eq)
+
+prop_compose :: Property
+prop_compose = property $ do
+  person <- forAll (Person <$> Gen.string (Range.linear 0 10) Gen.unicode <*> Gen.integral (Range.linear 10 30))
+  let int = parser (StateT $ \(x:xs) -> (,xs) <$> readMaybe x) (\x -> x <$ tell [show x])
+      string = parser (StateT $ \(x:xs) -> Just (x,xs)) (\x -> x <$ tell [x])
+      p = Person <$> name .= string <*> age .= int
+      encoded = execWriter (encode p person)
+  evalStateT (decode p) encoded === Just person
 
 main :: IO ()
 main = do
