@@ -11,6 +11,12 @@ data IParser r w c a =
 parser :: r a -> (c -> w a) -> IParser r w c a
 parser dec enc = IParser { decoder = dec, encoder = Star enc }
 
+decode :: IParser r w c a -> r a
+decode = decoder
+
+encode :: IParser r w c a -> c -> w a
+encode = runStar . encoder
+
 instance (Functor w, Functor r) => Functor (IParser r w c) where
   fmap f i = IParser { decoder = f <$> decoder i
                      , encoder = f <$> encoder i
