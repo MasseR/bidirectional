@@ -11,6 +11,12 @@ import Hedgehog
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
 
+import Control.Monad.Reader
+       (ReaderT(..), runReaderT)
+import Control.Monad.Writer
+       (Writer, execWriter, tell)
+import Text.Read (readMaybe)
+
 import Data.IParser
 
 -- fmap id == id
@@ -40,6 +46,12 @@ prop_applicative_identity = property $ do
   x <- forAll $ Gen.integral (Range.linear 0 100)
   let p = pure x :: IParser Identity Identity Int Int
   decode (pure id <*> p) === pure x
+
+prop_bidirectional :: Property
+prop_bidirectional = property $ do
+  x <- forAll $ Gen.integral (Range.linear 0 100)
+  let int = parser (ReaderT readMaybe) (\x -> x <$ tell [show x])
+  runReaderT (decode int) (head (execWriter (encode int x))) === Just x
 
 main :: IO ()
 main = do
